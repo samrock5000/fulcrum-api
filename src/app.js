@@ -14,6 +14,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 const http = require("http");
+const wlogger = require("./util/winston-logging");
 
 const app = express();
 
@@ -40,8 +41,7 @@ app.use(logger(morganFormat));
 // Log the same data to the winston logs.
 const logStream = {
   write: function(message, encoding) {
-    // wlogger.info(`request: ${message}`);
-    console.log(`request: ${message}`);
+    wlogger.info(`request: ${message}`);
   }
 };
 app.use(logger(morganFormat, { stream: logStream }));
@@ -87,7 +87,7 @@ app.use((err, req, res, next) => {
  */
 const port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
-console.log(`fulcrum-api started on port ${port}`);
+wlogger.info(`fulcrum-api started on port ${port}`);
 
 /**
  * Create HTTP server.
