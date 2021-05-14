@@ -16,10 +16,12 @@ const path = require('path')
 const http = require('http')
 const wlogger = require('./util/winston-logging')
 
+// Instantiate the Fulcrum Electrumx route library.
 const ElectrumxV1 = require('./routes/v1/electrumx')
-
 const electrumxv1 = new ElectrumxV1()
-// electrumxv1.connect()
+
+// Connect to the Fulcrum server.
+electrumxv1.connect()
 
 const app = express()
 

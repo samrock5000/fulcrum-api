@@ -64,46 +64,46 @@ class Electrum {
   }
 
   // Initializes a connection to electrum servers.
-  // async connect () {
-  //   try {
-  //     console.log('Attempting to connect to ElectrumX server...')
-  //
-  //     // console.log('_this.electrumx: ', _this.electrumx)
-  //
-  //     // Return immediately if a connection has already been established.
-  //     if (_this.isReady) return true
-  //
-  //     // Connect to the server.
-  //     await _this.electrumx.connect()
-  //
-  //     // Set the connection flag.
-  //     _this.isReady = true
-  //
-  //     // Periodically check the connection. If it's not connected, attempt to
-  //     // reconnect.
-  //     _this.reconnectIntervalHandle = setInterval(async function () {
-  //       const status = _this.electrumx.connection.status
-  //       // console.log(`Electrumx status: ${status}`)
-  //
-  //       // 1 = connected. If we're not connected, attemp to reconnect.
-  //       if (status !== 1) {
-  //         wlogger.info(`Electrumx not connectes. Status: ${status}`)
-  //         wlogger.info('Attempting to reconnect...')
-  //         await _this.electrumx.connect()
-  //         wlogger.info('...reconnected.')
-  //       }
-  //     }, 30000)
-  //
-  //     console.log('...Successfully connected to ElectrumX server.')
-  //
-  //     // console.log(`_this.isReady: ${_this.isReady}`)
-  //     return _this.isReady
-  //   } catch (err) {
-  //     console.log('err: ', err)
-  //     wlogger.error('Error in electrumx.js/connect(): ', err)
-  //     // throw err
-  //   }
-  // }
+  async connect () {
+    try {
+      console.log('Attempting to connect to ElectrumX server...')
+
+      // console.log('_this.electrumx: ', _this.electrumx)
+
+      // Return immediately if a connection has already been established.
+      if (_this.isReady) return true
+
+      // Connect to the server.
+      await _this.electrumx.connect()
+
+      // Set the connection flag.
+      _this.isReady = true
+
+      // Periodically check the connection. If it's not connected, attempt to
+      // reconnect.
+      _this.reconnectIntervalHandle = setInterval(async function () {
+        const status = _this.electrumx.connection.status
+        // console.log(`Electrumx status: ${status}`)
+
+        // 1 = connected. If we're not connected, attemp to reconnect.
+        if (status !== 1) {
+          wlogger.info(`Electrumx not connectes. Status: ${status}`)
+          wlogger.info('Attempting to reconnect...')
+          await _this.electrumx.connect()
+          wlogger.info('...reconnected.')
+        }
+      }, 30000)
+
+      console.log('...Successfully connected to ElectrumX server.')
+
+      // console.log(`_this.isReady: ${_this.isReady}`)
+      return _this.isReady
+    } catch (err) {
+      console.log('err: ', err)
+      wlogger.error('Error in electrumx.js/connect(): ', err)
+      // throw err
+    }
+  }
 
   // Disconnect from the ElectrumX server.
   // async disconnect () {
