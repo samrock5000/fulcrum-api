@@ -16,5 +16,20 @@
   "bugs": {
     "url": "https://github.com/Permissionless-Software-Foundation/fulcrum-api/issues"
   },
-  "homepage": "https://github.com/Permissionless-Software-Foundation/fulcrum-api#readme"
+  "homepage": "https://github.com/Permissionless-Software-Foundation/fulcrum-api#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "mocha": "^8.4.0",
+    "semantic-release": "^17.4.3"
+  },
+  "release": {
+    "publish": [
+      {
+        "path": "@semantic-release/npm",
+        "npmPublish": false
+      }
+    ]
+  }
 }
