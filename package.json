@@ -1,0 +1,20 @@
+{
+  "name": "fulcrum-api",
+  "version": "1.0.0",
+  "description": "A REST API wrapper for Fulcrum Electrumx indexer and electrum-cash JS library. ",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "echo no tests yet"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Permissionless-Software-Foundation/fulcrum-api.git"
+  },
+  "author": "Chris Troutner <chris.troutner@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Permissionless-Software-Foundation/fulcrum-api/issues"
+  },
+  "homepage": "https://github.com/Permissionless-Software-Foundation/fulcrum-api#readme"
+}
