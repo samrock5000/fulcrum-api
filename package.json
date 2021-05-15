@@ -5,7 +5,8 @@
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
-    "test": "echo no tests yet"
+    "test": "npm run test-v1",
+    "test-v1": "export NETWORK=mainnet && nyc --reporter=text mocha --exit --timeout 60000 test/v1/"
   },
   "repository": {
     "type": "git",
@@ -18,11 +19,32 @@
   },
   "homepage": "https://github.com/Permissionless-Software-Foundation/fulcrum-api#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "axios": "^0.21.1",
+    "bitcore-lib-cash": "^8.25.10",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "electrum-cash": "^2.0.7",
+    "express": "^4.17.1",
+    "helmet": "^4.6.0",
+    "morgan": "^1.10.0",
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.5"
   },
   "devDependencies": {
+    "chai": "^4.3.4",
+    "eslint": "^7.26.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-standard": "^5.0.0",
+    "husky": "^6.0.0",
     "mocha": "^8.4.0",
-    "semantic-release": "^17.4.3"
+    "nyc": "^15.1.0",
+    "semantic-release": "^17.4.3",
+    "sinon": "^10.0.0",
+    "standard": "^16.0.3"
   },
   "release": {
     "publish": [
