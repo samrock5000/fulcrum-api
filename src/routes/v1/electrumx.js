@@ -267,117 +267,117 @@ class Electrum {
    *
    */
   // POST handler for bulk queries on address details
-  // async utxosBulk (req, res, next) {
-  //   try {
-  //     let addresses = req.body.addresses
-  //     // const currentPage = req.body.page ? parseInt(req.body.page, 10) : 0
-  //
-  //     // Reject if addresses is not an array.
-  //     if (!Array.isArray(addresses)) {
-  //       res.status(400)
-  //       return res.json({
-  //         error: 'addresses needs to be an array. Use GET for single address.'
-  //       })
-  //     }
-  //
-  //     // Enforce array size rate limits
-  //     if (!_this.routeUtils.validateArraySize(req, addresses)) {
-  //       res.status(400) // https://github.com/Bitcoin-com/rest.bitcoin.com/issues/330
-  //       return res.json({
-  //         error: 'Array too large.'
-  //       })
-  //     }
-  //
-  //     wlogger.debug(
-  //       'Executing electrumx.js/utxoBulk with these addresses: ',
-  //       addresses
-  //     )
-  //
-  //     // Validate each element in the address array.
-  //     for (let i = 0; i < addresses.length; i++) {
-  //       const thisAddress = addresses[i]
-  //
-  //       // Ensure the input is a valid BCH address.
-  //       try {
-  //         _this.bchjs.Address.toLegacyAddress(thisAddress)
-  //       } catch (err) {
-  //         res.status(400)
-  //         return res.json({
-  //           error: `Invalid BCH address. Double check your address is valid: ${thisAddress}`
-  //         })
-  //       }
-  //
-  //       // Prevent a common user error. Ensure they are using the correct network address.
-  //       const networkIsValid = _this.routeUtils.validateNetwork(thisAddress)
-  //       if (!networkIsValid) {
-  //         res.status(400)
-  //         return res.json({
-  //           error: `Invalid network for address ${thisAddress}. Trying to use a testnet address on mainnet, or vice versa.`
-  //         })
-  //       }
-  //     }
-  //
-  //     // Loops through each address and creates an array of Promises, querying
-  //     // Insight API in parallel.
-  //     addresses = addresses.map(async (address, index) => {
-  //       // console.log(`address: ${address}`)
-  //       const utxos = await _this._utxosFromElectrumx(address)
-  //
-  //       return {
-  //         utxos,
-  //         address
-  //       }
-  //     })
-  //
-  //     // Wait for all parallel Insight requests to return.
-  //     const result = await Promise.all(addresses)
-  //
-  //     // Return the array of retrieved address information.
-  //     res.status(200)
-  //     return res.json({
-  //       success: true,
-  //       utxos: result
-  //     })
-  //   } catch (err) {
-  //     wlogger.error('Error in electrumx.js/utxoBulk().', err)
-  //
-  //     return _this.errorHandler(err, res)
-  //   }
-  // }
+  async utxosBulk (req, res, next) {
+    try {
+      let addresses = req.body.addresses
+      // const currentPage = req.body.page ? parseInt(req.body.page, 10) : 0
+
+      // Reject if addresses is not an array.
+      if (!Array.isArray(addresses)) {
+        res.status(400)
+        return res.json({
+          error: 'addresses needs to be an array. Use GET for single address.'
+        })
+      }
+
+      // Enforce array size rate limits
+      if (!_this.routeUtils.validateArraySize(req, addresses)) {
+        res.status(400) // https://github.com/Bitcoin-com/rest.bitcoin.com/issues/330
+        return res.json({
+          error: 'Array too large.'
+        })
+      }
+
+      wlogger.debug(
+        'Executing electrumx.js/utxoBulk with these addresses: ',
+        addresses
+      )
+
+      // Validate each element in the address array.
+      for (let i = 0; i < addresses.length; i++) {
+        const thisAddress = addresses[i]
+
+        // Ensure the input is a valid BCH address.
+        try {
+          _this.bchjs.Address.toLegacyAddress(thisAddress)
+        } catch (err) {
+          res.status(400)
+          return res.json({
+            error: `Invalid BCH address. Double check your address is valid: ${thisAddress}`
+          })
+        }
+
+        // Prevent a common user error. Ensure they are using the correct network address.
+        const networkIsValid = _this.routeUtils.validateNetwork(thisAddress)
+        if (!networkIsValid) {
+          res.status(400)
+          return res.json({
+            error: `Invalid network for address ${thisAddress}. Trying to use a testnet address on mainnet, or vice versa.`
+          })
+        }
+      }
+
+      // Loops through each address and creates an array of Promises, querying
+      // Insight API in parallel.
+      addresses = addresses.map(async (address, index) => {
+        // console.log(`address: ${address}`)
+        const utxos = await _this._utxosFromElectrumx(address)
+
+        return {
+          utxos,
+          address
+        }
+      })
+
+      // Wait for all parallel Insight requests to return.
+      const result = await Promise.all(addresses)
+
+      // Return the array of retrieved address information.
+      res.status(200)
+      return res.json({
+        success: true,
+        utxos: result
+      })
+    } catch (err) {
+      wlogger.error('Error in electrumx.js/utxoBulk().', err)
+
+      return _this.errorHandler(err, res)
+    }
+  }
 
   // Returns a promise that resolves to transaction details data for a txid.
   // Expects input to be a txid string, and input validation to have already
   // been done by parent, calling function.
-  // async _transactionDetailsFromElectrum (txid, verbose = true) {
-  //   try {
-  //     if (!_this.isReady) {
-  //       throw new Error(
-  //         'ElectrumX server connection is not ready. Call await connectToServer() first.'
-  //       )
-  //     }
-  //
-  //     // Query the utxos from the ElectrumX server.
-  //     const electrumResponse = await _this.electrumx.request(
-  //       'blockchain.transaction.get',
-  //       txid,
-  //       verbose
-  //     )
-  //     // console.log(
-  //     //   `electrumResponse: ${JSON.stringify(electrumResponse, null, 2)}`
-  //     // )
-  //
-  //     return electrumResponse
-  //   } catch (err) {
-  //     // console.log('err: ', err)
-  //
-  //     // Write out error to error log.
-  //     wlogger.error(
-  //       'Error in elecrumx.js/_transactionDetailsFromElectrum(): ',
-  //       err
-  //     )
-  //     throw err
-  //   }
-  // }
+  async _transactionDetailsFromElectrum (txid, verbose = true) {
+    try {
+      if (!_this.isReady) {
+        throw new Error(
+          'ElectrumX server connection is not ready. Call await connectToServer() first.'
+        )
+      }
+
+      // Query the utxos from the ElectrumX server.
+      const electrumResponse = await _this.electrumx.request(
+        'blockchain.transaction.get',
+        txid,
+        verbose
+      )
+      // console.log(
+      //   `electrumResponse: ${JSON.stringify(electrumResponse, null, 2)}`
+      // )
+
+      return electrumResponse
+    } catch (err) {
+      // console.log('err: ', err)
+
+      // Write out error to error log.
+      wlogger.error(
+        'Error in elecrumx.js/_transactionDetailsFromElectrum(): ',
+        err
+      )
+      throw err
+    }
+  }
 
   /**
    * @api {get} /electrumx/tx/data/{txid} Get transaction details for a TXID
@@ -391,53 +391,53 @@ class Electrum {
    *
    */
   // GET handler for single transaction
-  // async getTransactionDetails (req, res, next) {
-  //   try {
-  //     const txid = req.params.txid
-  //     const verbose = req.query.verbose
-  //
-  //     // Reject if txid is anything other than a string
-  //     if (typeof txid !== 'string') {
-  //       res.status(400)
-  //       return res.json({
-  //         success: false,
-  //         error: 'txid must be a string'
-  //       })
-  //     }
-  //
-  //     wlogger.debug(
-  //       'Executing electrumx/getTransactionDetails with this txid: ',
-  //       txid
-  //     )
-  //
-  //     // Get data from ElectrumX server.
-  //     const electrumResponse = await _this._transactionDetailsFromElectrum(
-  //       txid,
-  //       verbose
-  //     )
-  //     // console.log(`_transactionDetailsFromElectrum(): ${JSON.stringify(electrumResponse, null, 2)}`)
-  //
-  //     // Pass the error message if ElectrumX reports an error.
-  //     if (electrumResponse instanceof Error) {
-  //       res.status(400)
-  //       return res.json({
-  //         success: false,
-  //         error: electrumResponse.message
-  //       })
-  //     }
-  //
-  //     res.status(200)
-  //     return res.json({
-  //       success: true,
-  //       details: electrumResponse
-  //     })
-  //   } catch (err) {
-  //     // Write out error to error log.
-  //     wlogger.error('Error in elecrumx.js/getTransactionDetails().', err)
-  //
-  //     return _this.errorHandler(err, res)
-  //   }
-  // }
+  async getTransactionDetails (req, res, next) {
+    try {
+      const txid = req.params.txid
+      const verbose = req.query.verbose
+
+      // Reject if txid is anything other than a string
+      if (typeof txid !== 'string') {
+        res.status(400)
+        return res.json({
+          success: false,
+          error: 'txid must be a string'
+        })
+      }
+
+      wlogger.debug(
+        'Executing electrumx/getTransactionDetails with this txid: ',
+        txid
+      )
+
+      // Get data from ElectrumX server.
+      const electrumResponse = await _this._transactionDetailsFromElectrum(
+        txid,
+        verbose
+      )
+      // console.log(`_transactionDetailsFromElectrum(): ${JSON.stringify(electrumResponse, null, 2)}`)
+
+      // Pass the error message if ElectrumX reports an error.
+      if (electrumResponse instanceof Error) {
+        res.status(400)
+        return res.json({
+          success: false,
+          error: electrumResponse.message
+        })
+      }
+
+      res.status(200)
+      return res.json({
+        success: true,
+        details: electrumResponse
+      })
+    } catch (err) {
+      // Write out error to error log.
+      wlogger.error('Error in elecrumx.js/getTransactionDetails().', err)
+
+      return _this.errorHandler(err, res)
+    }
+  }
 
   /**
    * @api {post} /electrumx/tx/data Get transaction details for an array of TXIDs
@@ -452,94 +452,94 @@ class Electrum {
    *
    */
   // POST handler for bulk queries on transaction details
-  // async transactionDetailsBulk (req, res, next) {
-  //   try {
-  //     const txids = req.body.txids
-  //     const verbose = req.body.verbose || true
-  //
-  //     // Reject if txids is not an array.
-  //     if (!Array.isArray(txids)) {
-  //       res.status(400)
-  //       return res.json({
-  //         success: false,
-  //         error: 'txids needs to be an array. Use GET for single txid.'
-  //       })
-  //     }
-  //
-  //     // Enforce array size rate limits
-  //     if (!_this.routeUtils.validateArraySize(req, txids)) {
-  //       res.status(400) // https://github.com/Bitcoin-com/rest.bitcoin.com/issues/330
-  //       return res.json({
-  //         success: false,
-  //         error: 'Array too large.'
-  //       })
-  //     }
-  //
-  //     wlogger.debug(
-  //       'Executing electrumx.js/transactionDetailsBulk with these txids: ',
-  //       txids
-  //     )
-  //
-  //     // Loops through each address and creates an array of Promises, querying
-  //     // the Electrum server in parallel.
-  //     const transactions = txids.map(async (txid, index) => {
-  //       // console.log(`address: ${address}`)
-  //       const details = await _this._transactionDetailsFromElectrum(
-  //         txid,
-  //         verbose
-  //       )
-  //
-  //       return { details, txid }
-  //     })
-  //
-  //     // Wait for all parallel Electrum requests to return.
-  //     const result = await Promise.all(transactions)
-  //
-  //     // Return the array of retrieved transaction details.
-  //     res.status(200)
-  //     return res.json({
-  //       success: true,
-  //       transactions: result
-  //     })
-  //   } catch (err) {
-  //     wlogger.error('Error in electrumx.js/transactionDetailsBulk().', err)
-  //
-  //     return _this.errorHandler(err, res)
-  //   }
-  // }
+  async transactionDetailsBulk (req, res, next) {
+    try {
+      const txids = req.body.txids
+      const verbose = req.body.verbose || true
+
+      // Reject if txids is not an array.
+      if (!Array.isArray(txids)) {
+        res.status(400)
+        return res.json({
+          success: false,
+          error: 'txids needs to be an array. Use GET for single txid.'
+        })
+      }
+
+      // Enforce array size rate limits
+      if (!_this.routeUtils.validateArraySize(req, txids)) {
+        res.status(400) // https://github.com/Bitcoin-com/rest.bitcoin.com/issues/330
+        return res.json({
+          success: false,
+          error: 'Array too large.'
+        })
+      }
+
+      wlogger.debug(
+        'Executing electrumx.js/transactionDetailsBulk with these txids: ',
+        txids
+      )
+
+      // Loops through each address and creates an array of Promises, querying
+      // the Electrum server in parallel.
+      const transactions = txids.map(async (txid, index) => {
+        // console.log(`address: ${address}`)
+        const details = await _this._transactionDetailsFromElectrum(
+          txid,
+          verbose
+        )
+
+        return { details, txid }
+      })
+
+      // Wait for all parallel Electrum requests to return.
+      const result = await Promise.all(transactions)
+
+      // Return the array of retrieved transaction details.
+      res.status(200)
+      return res.json({
+        success: true,
+        transactions: result
+      })
+    } catch (err) {
+      wlogger.error('Error in electrumx.js/transactionDetailsBulk().', err)
+
+      return _this.errorHandler(err, res)
+    }
+  }
 
   // Returns a promise that resolves to transaction ID of the broadcasted transaction or an error.
   // Expects input to be a txHex string, and input validation to have already
   // been done by parent, calling function.
-  // async _broadcastTransactionWithElectrum (txHex) {
-  //   try {
-  //     if (!_this.isReady) {
-  //       throw new Error(
-  //         'ElectrumX server connection is not ready. Call await connectToServer() first.'
-  //       )
-  //     }
-  //
-  //     // Broadcast the transaction hex to the ElectrumX server.
-  //     const electrumResponse = await _this.electrumx.request(
-  //       'blockchain.transaction.broadcast',
-  //       txHex
-  //     )
-  //     // console.log(
-  //     //   `electrumResponse: ${JSON.stringify(electrumResponse, null, 2)}`
-  //     // )
-  //
-  //     return electrumResponse
-  //   } catch (err) {
-  //     // console.log('err: ', err)
-  //
-  //     // Write out error to error log.
-  //     wlogger.error(
-  //       'Error in elecrumx.js/_transactionDetailsFromElectrum(): ',
-  //       err
-  //     )
-  //     throw err
-  //   }
-  // }
+  async _broadcastTransactionWithElectrum (txHex) {
+    try {
+      if (!_this.isReady) {
+        throw new Error(
+          'ElectrumX server connection is not ready. Call await connectToServer() first.'
+        )
+      }
+
+      // Broadcast the transaction hex to the ElectrumX server.
+      const electrumResponse = await _this.electrumx.request(
+        'blockchain.transaction.broadcast',
+        txHex
+      )
+      // console.log(
+      //   `electrumResponse: ${JSON.stringify(electrumResponse, null, 2)}`
+      // )
+
+      return electrumResponse
+    } catch (err) {
+      // console.log('err: ', err)
+
+      // Write out error to error log.
+      wlogger.error(
+        'Error in elecrumx.js/_transactionDetailsFromElectrum(): ',
+        err
+      )
+      throw err
+    }
+  }
 
   /**
    * @api {post} /electrumx/tx/broadcast Broadcast a raw transaction
@@ -552,84 +552,89 @@ class Electrum {
    *
    */
   // POST handler for broadcasting a single transaction
-  // async broadcastTransaction (req, res, next) {
-  //   try {
-  //     const txHex = req.body.txHex
-  //
-  //     if (typeof txHex !== 'string') {
-  //       res.status(400)
-  //       return res.json({
-  //         success: false,
-  //         error: 'request body must be a string.'
-  //       })
-  //     }
-  //
-  //     wlogger.debug(
-  //       'Executing electrumx/broadcastTransaction with this tx hex: ',
-  //       txHex
-  //     )
-  //
-  //     // Get data from ElectrumX server.
-  //     const electrumResponse = await _this._broadcastTransactionWithElectrum(txHex)
-  //     // console.log(`_utxosFromElectrumx(): ${JSON.stringify(electrumResponse, null, 2)}`)
-  //
-  //     // Pass the error message if ElectrumX reports an error.
-  //     if (electrumResponse instanceof Error) {
-  //       res.status(400)
-  //       return res.json({
-  //         success: false,
-  //         error: electrumResponse.message
-  //       })
-  //     }
-  //
-  //     res.status(200)
-  //     return res.json({
-  //       success: true,
-  //       txid: electrumResponse
-  //     })
-  //   } catch (err) {
-  //     wlogger.error('Error in electrumx.js/broadcastTransaction().', err)
-  //
-  //     return _this.errorHandler(err, res)
-  //   }
-  // }
+  async broadcastTransaction (req, res, next) {
+    try {
+      const txHex = req.body.txHex
+
+      if (typeof txHex !== 'string') {
+        res.status(400)
+        return res.json({
+          success: false,
+          error: 'request body must be a string.'
+        })
+      }
+
+      wlogger.debug(
+        'Executing electrumx/broadcastTransaction with this tx hex: ',
+        txHex
+      )
+
+      // Get data from ElectrumX server.
+      const electrumResponse = await _this._broadcastTransactionWithElectrum(
+        txHex
+      )
+      // console.log(`_utxosFromElectrumx(): ${JSON.stringify(electrumResponse, null, 2)}`)
+
+      // Pass the error message if ElectrumX reports an error.
+      if (electrumResponse instanceof Error) {
+        res.status(400)
+        return res.json({
+          success: false,
+          error: electrumResponse.message
+        })
+      }
+
+      res.status(200)
+      return res.json({
+        success: true,
+        txid: electrumResponse
+      })
+    } catch (err) {
+      wlogger.error('Error in electrumx.js/broadcastTransaction().', err)
+
+      return _this.errorHandler(err, res)
+    }
+  }
 
   // Returns a promise that resolves to block header data for a block height.
   // Expects input to be a height number, and input validation to have already
   // been done by parent, calling function.
-  // async _blockHeadersFromElectrum (height, count = 1) {
-  //   try {
-  //     if (!_this.isReady) {
-  //       throw new Error(
-  //         'ElectrumX server connection is not ready. Call await connectToServer() first.'
-  //       )
-  //     }
-  //
-  //     // Query the block header from the ElectrumX server.
-  //     const electrumResponse = await _this.electrumx.request('blockchain.block.headers', height, count)
-  //     // console.log(
-  //     //   `electrumResponse: ${JSON.stringify(electrumResponse, null, 2)}`
-  //     // )
-  //
-  //     const HEADER_SIZE = 80 * 2
-  //
-  //     if (!(electrumResponse instanceof Error)) {
-  //       const headers = electrumResponse.hex.match(new RegExp(`.{1,${HEADER_SIZE}}`, 'g'))
-  //       return headers
-  //     }
-  //
-  //     return electrumResponse
-  //   } catch (err) {
-  //     // console.log('err: ', err)
-  //
-  //     // Write out error to error log.
-  //     wlogger.error(
-  //       'Error in elecrumx.js/_blockHeaderFromElectrum(): ',
-  //       err
-  //     )
-  //     throw err
-  //   }
-  // }
+  async _blockHeadersFromElectrum (height, count = 1) {
+    try {
+      if (!_this.isReady) {
+        throw new Error(
+          'ElectrumX server connection is not ready. Call await connectToServer() first.'
+        )
+      }
+
+      // Query the block header from the ElectrumX server.
+      const electrumResponse = await _this.electrumx.request(
+        'blockchain.block.headers',
+        height,
+        count
+      )
+      // console.log(
+      //   `electrumResponse: ${JSON.stringify(electrumResponse, null, 2)}`
+      // )
+
+      const HEADER_SIZE = 80 * 2
+
+      if (!(electrumResponse instanceof Error)) {
+        const headers = electrumResponse.hex.match(
+          new RegExp(`.{1,${HEADER_SIZE}}`, 'g')
+        )
+        return headers
+      }
+
+      return electrumResponse
+    } catch (err) {
+      // console.log('err: ', err)
+
+      // Write out error to error log.
+      wlogger.error('Error in elecrumx.js/_blockHeaderFromElectrum(): ', err)
+      throw err
+    }
+  }
 
   /**
    * @api {get} /electrumx/block/headers/{height} Get `count` block headers starting at a height

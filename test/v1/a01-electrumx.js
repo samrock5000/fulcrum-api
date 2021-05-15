@@ -309,413 +309,507 @@ describe('#Electrumx', () => {
     })
   })
 
-  // describe('#utxosBulk', () => {
-  //   it('should throw an error for an empty body', async () => {
-  //     req.body = {}
-  //
-  //     const result = await electrumxRoute.utxosBulk(req, res)
-  //     // console.log(`result: ${util.inspect(result)}`)
-  //
-  //     assert.equal(res.statusCode, 400, 'HTTP status code 400 expected.')
-  //     assert.include(
-  //       result.error,
-  //       'addresses needs to be an array',
-  //       'Proper error message'
-  //     )
-  //   })
-  //
-  //   it('should error on non-array single address', async () => {
-  //     req.body = {
-  //       address: 'qzs02v05l7qs5s24srqju498qu55dwuj0cx5ehjm2c'
-  //     }
-  //
-  //     const result = await electrumxRoute.utxosBulk(req, res)
-  //
-  //     assert.equal(res.statusCode, 400, 'HTTP status code 400 expected.')
-  //     assert.include(
-  //       result.error,
-  //       'addresses needs to be an array',
-  //       'Proper error message'
-  //     )
-  //   })
-  //
-  //   it('should throw an error for an invalid address', async () => {
-  //     req.body = {
-  //       addresses: ['02v05l7qs5s24srqju498qu55dwuj0cx5ehjm2c']
-  //     }
-  //
-  //     const result = await electrumxRoute.utxosBulk(req, res)
-  //
-  //     assert.equal(res.statusCode, 400, 'HTTP status code 400 expected.')
-  //     assert.include(
-  //       result.error,
-  //       'Invalid BCH address',
-  //       'Proper error message'
-  //     )
-  //   })
-  //
-  //   it('should throw 400 error if addresses array is too large', async () => {
-  //     const testArray = []
-  //     for (let i = 0; i < 25; i++) testArray.push('')
-  //
-  //     req.body.addresses = testArray
-  //
-  //     const result = await electrumxRoute.utxosBulk(req, res)
-  //     // console.log(`result: ${util.inspect(result)}`)
-  //
-  //     assert.hasAllKeys(result, ['error'])
-  //     assert.include(result.error, 'Array too large')
-  //   })
-  //
-  //   it('should detect a network mismatch', async () => {
-  //     req.body = {
-  //       addresses: ['bchtest:qq89kjkeqz9mngp8kl3dpmu43y2wztdjqu500gn4c4']
-  //     }
-  //
-  //     const result = await electrumxRoute.utxosBulk(req, res)
-  //     // console.log(`result: ${util.inspect(result)}`)
-  //
-  //     assert.equal(res.statusCode, 400, 'HTTP status code 400 expected.')
-  //     assert.include(result.error, 'Invalid network', 'Proper error message')
-  //   })
-  //
-  //   it('should get details for a single address', async () => {
-  //     req.body = {
-  //       addresses: ['bitcoincash:qp3sn6vlwz28ntmf3wmyra7jqttfx7z6zgtkygjhc7']
-  //     }
-  //
-  //     // Mock the Insight URL for unit tests.
-  //     if (process.env.TEST === 'unit') {
-  //       electrumxRoute.isReady = true // Force flag.
-  //
-  //       sandbox
-  //         .stub(electrumxRoute, '_utxosFromElectrumx')
-  //         .resolves(mockData.utxos)
-  //     }
-  //
-  //     // Call the details API.
-  //     const result = await electrumxRoute.utxosBulk(req, res)
-  //     // console.log(`result: ${JSON.stringify(result, null, 2)}`)
-  //
-  //     assert.property(result, 'success')
-  //     assert.equal(result.success, true)
-  //
-  //     assert.property(result, 'utxos')
-  //     assert.isArray(result.utxos)
-  //
-  //     assert.property(result.utxos[0], 'address')
-  //     assert.property(result.utxos[0], 'utxos')
-  //
-  //     assert.isArray(result.utxos[0].utxos)
-  //     assert.property(result.utxos[0].utxos[0], 'height')
-  //     assert.property(result.utxos[0].utxos[0], 'tx_hash')
-  //     assert.property(result.utxos[0].utxos[0], 'tx_pos')
-  //     assert.property(result.utxos[0].utxos[0], 'value')
-  //   })
-  //
-  //   it('should get utxos for multiple addresses', async () => {
-  //     req.body = {
-  //       addresses: [
-  //         'bitcoincash:qrdka2205f4hyukutc2g0s6lykperc8nsu5u2ddpqf',
-  //         'bitcoincash:qrdka2205f4hyukutc2g0s6lykperc8nsu5u2ddpqf'
-  //       ]
-  //     }
-  //
-  //     // Mock the Insight URL for unit tests.
-  //     if (process.env.TEST === 'unit') {
-  //       electrumxRoute.isReady = true // Force flag.
-  //
-  //       sandbox
-  //         .stub(electrumxRoute, '_utxosFromElectrumx')
-  //         .resolves(mockData.utxos)
-  //     }
-  //
-  //     // Call the details API.
-  //     const result = await electrumxRoute.utxosBulk(req, res)
-  //     // console.log(`result: ${JSON.stringify(result, null, 2)}`)
-  //
-  //     assert.property(result, 'success')
-  //     assert.equal(result.success, true)
-  //
-  //     assert.isArray(result.utxos)
-  //     assert.isArray(result.utxos[0].utxos)
-  //     assert.equal(result.utxos.length, 2, '2 outputs for 2 inputs')
-  //   })
-  // })
-  //
-  // describe('#_transactionDetailsFromElectrum', () => {
-  //   it('should return error object for invalid txid', async () => {
-  //     const txid =
-  //       '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb25'
-  //
-  //     stubMethodForUnitTests(
-  //       electrumxRoute.electrumx,
-  //       'request',
-  //       new Error('Invalid tx hash')
-  //     )
-  //
-  //     const result = await electrumxRoute._transactionDetailsFromElectrum(txid)
-  //
-  //     assert.instanceOf(result, Error)
-  //     assert.include(result.message, 'Invalid tx hash')
-  //   })
-  //
-  //   it('should get details for a single txid', async () => {
-  //     const txid =
-  //       '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb251'
-  //
-  //     stubMethodForUnitTests(
-  //       electrumxRoute.electrumx,
-  //       'request',
-  //       mockData.txDetails
-  //     )
-  //
-  //     const result = await electrumxRoute._transactionDetailsFromElectrum(txid)
-  //
-  //     assert.isObject(result)
-  //     assert.property(result, 'blockhash')
-  //     assert.property(result, 'hash')
-  //     assert.property(result, 'hex')
-  //     assert.property(result, 'vin')
-  //     assert.property(result, 'vout')
-  //     assert.equal(result.hash, txid)
-  //   })
-  // })
-  //
-  // describe('#getTransactionDetails', () => {
-  //   it('should throw 400 if txid is not a string', async () => {
-  //     req.params.txid = 5
-  //
-  //     const result = await electrumxRoute.getTransactionDetails(req, res)
-  //
-  //     expectRouteError(res, result, 'txid must be a string')
-  //   })
-  //
-  //   it('should throw 400 on array input', async () => {
-  //     req.params.txid = [
-  //       '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb251'
-  //     ]
-  //
-  //     const result = await electrumxRoute.getTransactionDetails(req, res)
-  //
-  //     expectRouteError(res, result, 'txid must be a string')
-  //   })
-  //
-  //   it('should return error object for invalid txid', async () => {
-  //     req.params.txid =
-  //       '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb25'
-  //
-  //     stubMethodForUnitTests(
-  //       electrumxRoute.electrumx,
-  //       'request',
-  //       new Error('Invalid tx hash')
-  //     )
-  //
-  //     // Call the details API.
-  //     const result = await electrumxRoute.getTransactionDetails(req, res)
-  //
-  //     expectRouteError(res, result, 'Invalid tx hash')
-  //   })
-  //
-  //   it('should get details for a single txid', async () => {
-  //     req.params.txid =
-  //       '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb251'
-  //
-  //     stubMethodForUnitTests(
-  //       electrumxRoute.electrumx,
-  //       'request',
-  //       mockData.txDetails
-  //     )
-  //
-  //     // Call the details API.
-  //     const result = await electrumxRoute.getTransactionDetails(req, res)
-  //     // console.log(`result: ${JSON.stringify(result, null, 2)}`)
-  //
-  //     assert.property(result, 'success')
-  //     assert.equal(result.success, true)
-  //
-  //     assert.property(result, 'details')
-  //     assert.isObject(result.details)
-  //
-  //     assert.property(result.details, 'blockhash')
-  //     assert.property(result.details, 'hash')
-  //     assert.property(result.details, 'hex')
-  //     assert.property(result.details, 'vin')
-  //     assert.property(result.details, 'vout')
-  //     assert.equal(result.details.hash, req.params.txid)
-  //   })
-  // })
-  //
-  // describe('#transactionDetailsBulk', () => {
-  //   it('should throw an error for an empty body', async () => {
-  //     req.body = {}
-  //
-  //     const result = await electrumxRoute.transactionDetailsBulk(req, res)
-  //
-  //     expectRouteError(res, result, 'txids needs to be an array')
-  //   })
-  //
-  //   it('should error on non-array single txid', async () => {
-  //     req.body = {
-  //       txid: '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb251'
-  //     }
-  //
-  //     const result = await electrumxRoute.transactionDetailsBulk(req, res)
-  //
-  //     expectRouteError(res, result, 'txids needs to be an array')
-  //   })
-  //
-  //   it('should NOT throw 400 error for an invalid txid', async () => {
-  //     req.body = {
-  //       txids: [
-  //         '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb25'
-  //       ]
-  //     }
-  //
-  //     stubMethodForUnitTests(
-  //       electrumxRoute.electrumx,
-  //       'request',
-  //       mockData.txDetails
-  //     )
-  //
-  //     const result = await electrumxRoute.transactionDetailsBulk(req, res)
-  //
-  //     // This should probably throw a 400 error, but to be consistent with the other
-  //     // bulk endpoints it doesn't throw. This will change in the future
-  //     // expectRouteError(res, result, 'Invalid tx hash')
-  //
-  //     assert.property(result, 'success')
-  //     assert.equal(result.success, true)
-  //
-  //     assert.property(result, 'transactions')
-  //     assert.isArray(result.transactions)
-  //   })
-  //
-  //   it('should throw 400 error if txid array is too large', async () => {
-  //     const testArray = []
-  //     for (let i = 0; i < 25; i++) testArray.push('')
-  //
-  //     req.body.txids = testArray
-  //
-  //     const result = await electrumxRoute.transactionDetailsBulk(req, res)
-  //     // console.log(`result: ${util.inspect(result)}`)
-  //
-  //     expectRouteError(res, result, 'Array too large', 400)
-  //   })
-  //
-  //   it('should get details for a single txid', async () => {
-  //     req.body = {
-  //       txids: [
-  //         '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb251'
-  //       ]
-  //     }
-  //
-  //     stubMethodForUnitTests(
-  //       electrumxRoute.electrumx,
-  //       'request',
-  //       mockData.txDetails
-  //     )
-  //
-  //     // Call the details API.
-  //     const result = await electrumxRoute.transactionDetailsBulk(req, res)
-  //     // console.log(`result: ${JSON.stringify(result, null, 2)}`)
-  //
-  //     assert.property(result, 'success')
-  //     assert.equal(result.success, true)
-  //
-  //     assert.property(result, 'transactions')
-  //     assert.isArray(result.transactions)
-  //
-  //     assert.property(result.transactions[0], 'txid')
-  //     assert.property(result.transactions[0], 'details')
-  //
-  //     assert.property(result.transactions[0].details, 'blockhash')
-  //     assert.property(result.transactions[0].details, 'hash')
-  //     assert.property(result.transactions[0].details, 'hex')
-  //     assert.property(result.transactions[0].details, 'vin')
-  //     assert.property(result.transactions[0].details, 'vout')
-  //   })
-  //
-  //   it('should get details for multiple txids', async () => {
-  //     req.body = {
-  //       txids: [
-  //         '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb251',
-  //         '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb251'
-  //       ]
-  //     }
-  //
-  //     stubMethodForUnitTests(
-  //       electrumxRoute.electrumx,
-  //       'request',
-  //       mockData.txDetails
-  //     )
-  //
-  //     // Call the details API.
-  //     const result = await electrumxRoute.transactionDetailsBulk(req, res)
-  //     // console.log(`result: ${JSON.stringify(result, null, 2)}`)'
-  //
-  //     assert.property(result, 'success')
-  //     assert.equal(result.success, true)
-  //
-  //     assert.isArray(result.transactions)
-  //     assert.isObject(result.transactions[0].details)
-  //     assert.equal(result.transactions.length, 2, '2 outputs for 2 inputs')
-  //   })
-  // })
-  //
-  // describe('#_blockHeadersFromElectrum', () => {
-  //   it('should return error object for invalid block height', async () => {
-  //     const height = -10
-  //
-  //     stubMethodForUnitTests(
-  //       electrumxRoute.electrumx,
-  //       'request',
-  //       new Error('Invalid height')
-  //     )
-  //
-  //     const result = await electrumxRoute._blockHeadersFromElectrum(height, 2)
-  //
-  //     assert.instanceOf(result, Error)
-  //     assert.include(result.message, 'Invalid height')
-  //   })
-  //
-  //   it('should return error object for invalid count', async () => {
-  //     const height = 42
-  //
-  //     stubMethodForUnitTests(
-  //       electrumxRoute.electrumx,
-  //       'request',
-  //       new Error('Invalid count')
-  //     )
-  //
-  //     const result = await electrumxRoute._blockHeadersFromElectrum(height, -1)
-  //
-  //     assert.instanceOf(result, Error)
-  //     assert.include(result.message, 'Invalid count')
-  //   })
-  //
-  //   it('should get block header for a single block height', async () => {
-  //     const height = 42
-  //
-  //     const mockedResponse = {
-  //       count: 2,
-  //       hex: mockData.blockHeaders.join(''),
-  //       max: 2016
-  //     }
-  //
-  //     stubMethodForUnitTests(
-  //       electrumxRoute.electrumx,
-  //       'request',
-  //       mockedResponse
-  //     )
-  //
-  //     const result = await electrumxRoute._blockHeadersFromElectrum(height, 2)
-  //
-  //     assert.isArray(result)
-  //     assert.deepEqual(result, mockData.blockHeaders)
-  //   })
-  // })
-  //
+  describe('#utxosBulk', () => {
+    it('should throw an error for an empty body', async () => {
+      req.body = {}
+
+      const result = await electrumxRoute.utxosBulk(req, res)
+      // console.log(`result: ${util.inspect(result)}`)
+
+      assert.equal(res.statusCode, 400, 'HTTP status code 400 expected.')
+      assert.include(
+        result.error,
+        'addresses needs to be an array',
+        'Proper error message'
+      )
+    })
+
+    it('should error on non-array single address', async () => {
+      req.body = {
+        address: 'qzs02v05l7qs5s24srqju498qu55dwuj0cx5ehjm2c'
+      }
+
+      const result = await electrumxRoute.utxosBulk(req, res)
+
+      assert.equal(res.statusCode, 400, 'HTTP status code 400 expected.')
+      assert.include(
+        result.error,
+        'addresses needs to be an array',
+        'Proper error message'
+      )
+    })
+
+    it('should throw an error for an invalid address', async () => {
+      req.body = {
+        addresses: ['02v05l7qs5s24srqju498qu55dwuj0cx5ehjm2c']
+      }
+
+      const result = await electrumxRoute.utxosBulk(req, res)
+
+      assert.equal(res.statusCode, 400, 'HTTP status code 400 expected.')
+      assert.include(
+        result.error,
+        'Invalid BCH address',
+        'Proper error message'
+      )
+    })
+
+    it('should throw 400 error if addresses array is too large', async () => {
+      const testArray = []
+      for (let i = 0; i < 25; i++) testArray.push('')
+
+      req.body.addresses = testArray
+
+      const result = await electrumxRoute.utxosBulk(req, res)
+      // console.log(`result: ${util.inspect(result)}`)
+
+      assert.hasAllKeys(result, ['error'])
+      assert.include(result.error, 'Array too large')
+    })
+
+    it('should detect a network mismatch', async () => {
+      req.body = {
+        addresses: ['bchtest:qq89kjkeqz9mngp8kl3dpmu43y2wztdjqu500gn4c4']
+      }
+
+      const result = await electrumxRoute.utxosBulk(req, res)
+      // console.log(`result: ${util.inspect(result)}`)
+
+      assert.equal(res.statusCode, 400, 'HTTP status code 400 expected.')
+      assert.include(result.error, 'Invalid network', 'Proper error message')
+    })
+
+    it('should get details for a single address', async () => {
+      req.body = {
+        addresses: ['bitcoincash:qp3sn6vlwz28ntmf3wmyra7jqttfx7z6zgtkygjhc7']
+      }
+
+      // Mock the Insight URL for unit tests.
+      if (process.env.TEST === 'unit') {
+        electrumxRoute.isReady = true // Force flag.
+
+        sandbox
+          .stub(electrumxRoute, '_utxosFromElectrumx')
+          .resolves(mockData.utxos)
+      }
+
+      // Call the details API.
+      const result = await electrumxRoute.utxosBulk(req, res)
+      // console.log(`result: ${JSON.stringify(result, null, 2)}`)
+
+      assert.property(result, 'success')
+      assert.equal(result.success, true)
+
+      assert.property(result, 'utxos')
+      assert.isArray(result.utxos)
+
+      assert.property(result.utxos[0], 'address')
+      assert.property(result.utxos[0], 'utxos')
+
+      assert.isArray(result.utxos[0].utxos)
+      assert.property(result.utxos[0].utxos[0], 'height')
+      assert.property(result.utxos[0].utxos[0], 'tx_hash')
+      assert.property(result.utxos[0].utxos[0], 'tx_pos')
+      assert.property(result.utxos[0].utxos[0], 'value')
+    })
+
+    it('should get utxos for multiple addresses', async () => {
+      req.body = {
+        addresses: [
+          'bitcoincash:qrdka2205f4hyukutc2g0s6lykperc8nsu5u2ddpqf',
+          'bitcoincash:qrdka2205f4hyukutc2g0s6lykperc8nsu5u2ddpqf'
+        ]
+      }
+
+      // Mock the Insight URL for unit tests.
+      if (process.env.TEST === 'unit') {
+        electrumxRoute.isReady = true // Force flag.
+
+        sandbox
+          .stub(electrumxRoute, '_utxosFromElectrumx')
+          .resolves(mockData.utxos)
+      }
+
+      // Call the details API.
+      const result = await electrumxRoute.utxosBulk(req, res)
+      // console.log(`result: ${JSON.stringify(result, null, 2)}`)
+
+      assert.property(result, 'success')
+      assert.equal(result.success, true)
+
+      assert.isArray(result.utxos)
+      assert.isArray(result.utxos[0].utxos)
+      assert.equal(result.utxos.length, 2, '2 outputs for 2 inputs')
+    })
+  })
+
+  describe('#_transactionDetailsFromElectrum', () => {
+    it('should return error object for invalid txid', async () => {
+      const txid =
+        '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb25'
+
+      stubMethodForUnitTests(
+        electrumxRoute.electrumx,
+        'request',
+        new Error('Invalid tx hash')
+      )
+
+      const result = await electrumxRoute._transactionDetailsFromElectrum(txid)
+
+      assert.instanceOf(result, Error)
+      assert.include(result.message, 'Invalid tx hash')
+    })
+
+    it('should get details for a single txid', async () => {
+      const txid =
+        '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb251'
+
+      stubMethodForUnitTests(
+        electrumxRoute.electrumx,
+        'request',
+        mockData.txDetails
+      )
+
+      const result = await electrumxRoute._transactionDetailsFromElectrum(txid)
+
+      assert.isObject(result)
+      assert.property(result, 'blockhash')
+      assert.property(result, 'hash')
+      assert.property(result, 'hex')
+      assert.property(result, 'vin')
+      assert.property(result, 'vout')
+      assert.equal(result.hash, txid)
+    })
+  })
+
+  describe('#getTransactionDetails', () => {
+    it('should throw 400 if txid is not a string', async () => {
+      req.params.txid = 5
+
+      const result = await electrumxRoute.getTransactionDetails(req, res)
+
+      expectRouteError(res, result, 'txid must be a string')
+    })
+
+    it('should throw 400 on array input', async () => {
+      req.params.txid = [
+        '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb251'
+      ]
+
+      const result = await electrumxRoute.getTransactionDetails(req, res)
+
+      expectRouteError(res, result, 'txid must be a string')
+    })
+
+    it('should return error object for invalid txid', async () => {
+      req.params.txid =
+        '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb25'
+
+      stubMethodForUnitTests(
+        electrumxRoute.electrumx,
+        'request',
+        new Error('Invalid tx hash')
+      )
+
+      // Call the details API.
+      const result = await electrumxRoute.getTransactionDetails(req, res)
+
+      expectRouteError(res, result, 'Invalid tx hash')
+    })
+
+    it('should get details for a single txid', async () => {
+      req.params.txid =
+        '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb251'
+
+      stubMethodForUnitTests(
+        electrumxRoute.electrumx,
+        'request',
+        mockData.txDetails
+      )
+
+      // Call the details API.
+      const result = await electrumxRoute.getTransactionDetails(req, res)
+      // console.log(`result: ${JSON.stringify(result, null, 2)}`)
+
+      assert.property(result, 'success')
+      assert.equal(result.success, true)
+
+      assert.property(result, 'details')
+      assert.isObject(result.details)
+
+      assert.property(result.details, 'blockhash')
+      assert.property(result.details, 'hash')
+      assert.property(result.details, 'hex')
+      assert.property(result.details, 'vin')
+      assert.property(result.details, 'vout')
+      assert.equal(result.details.hash, req.params.txid)
+    })
+  })
+
+  describe('#transactionDetailsBulk', () => {
+    it('should throw an error for an empty body', async () => {
+      req.body = {}
+
+      const result = await electrumxRoute.transactionDetailsBulk(req, res)
+
+      expectRouteError(res, result, 'txids needs to be an array')
+    })
+
+    it('should error on non-array single txid', async () => {
+      req.body = {
+        txid: '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb251'
+      }
+
+      const result = await electrumxRoute.transactionDetailsBulk(req, res)
+
+      expectRouteError(res, result, 'txids needs to be an array')
+    })
+
+    it('should NOT throw 400 error for an invalid txid', async () => {
+      req.body = {
+        txids: [
+          '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb25'
+        ]
+      }
+
+      stubMethodForUnitTests(
+        electrumxRoute.electrumx,
+        'request',
+        mockData.txDetails
+      )
+
+      const result = await electrumxRoute.transactionDetailsBulk(req, res)
+
+      // This should probably throw a 400 error, but to be consistent with the other
+      // bulk endpoints it doesn't throw. This will change in the future
+      // expectRouteError(res, result, 'Invalid tx hash')
+
+      assert.property(result, 'success')
+      assert.equal(result.success, true)
+
+      assert.property(result, 'transactions')
+      assert.isArray(result.transactions)
+    })
+
+    it('should throw 400 error if txid array is too large', async () => {
+      const testArray = []
+      for (let i = 0; i < 25; i++) testArray.push('')
+
+      req.body.txids = testArray
+
+      const result = await electrumxRoute.transactionDetailsBulk(req, res)
+      // console.log(`result: ${util.inspect(result)}`)
+
+      expectRouteError(res, result, 'Array too large', 400)
+    })
+
+    it('should get details for a single txid', async () => {
+      req.body = {
+        txids: [
+          '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb251'
+        ]
+      }
+
+      stubMethodForUnitTests(
+        electrumxRoute.electrumx,
+        'request',
+        mockData.txDetails
+      )
+
+      // Call the details API.
+      const result = await electrumxRoute.transactionDetailsBulk(req, res)
+      // console.log(`result: ${JSON.stringify(result, null, 2)}`)
+
+      assert.property(result, 'success')
+      assert.equal(result.success, true)
+
+      assert.property(result, 'transactions')
+      assert.isArray(result.transactions)
+
+      assert.property(result.transactions[0], 'txid')
+      assert.property(result.transactions[0], 'details')
+
+      assert.property(result.transactions[0].details, 'blockhash')
+      assert.property(result.transactions[0].details, 'hash')
+      assert.property(result.transactions[0].details, 'hex')
+      assert.property(result.transactions[0].details, 'vin')
+      assert.property(result.transactions[0].details, 'vout')
+    })
+
+    it('should get details for multiple txids', async () => {
+      req.body = {
+        txids: [
+          '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb251',
+          '4db095f34d632a4daf942142c291f1f2abb5ba2e1ccac919d85bdc2f671fb251'
+        ]
+      }
+
+      stubMethodForUnitTests(
+        electrumxRoute.electrumx,
+        'request',
+        mockData.txDetails
+      )
+
+      // Call the details API.
+      const result = await electrumxRoute.transactionDetailsBulk(req, res)
+      // console.log(`result: ${JSON.stringify(result, null, 2)}`)'
+
+      assert.property(result, 'success')
+      assert.equal(result.success, true)
+
+      assert.isArray(result.transactions)
+      assert.isObject(result.transactions[0].details)
+      assert.equal(result.transactions.length, 2, '2 outputs for 2 inputs')
+    })
+  })
+
+  describe('#_broadcastTransactionWithElectrum', () => {
+    it('should return error object for invalid formatted transaction', async () => {
+      const invalidHex = mockData.txDetails.hex.substring(10)
+
+      stubMethodForUnitTests(
+        electrumxRoute.electrumx,
+        'request',
+        new Error(
+          'Error: the transaction was rejected by network rules.\n\nTX decode failed\n'
+        )
+      )
+
+      const result = await electrumxRoute._broadcastTransactionWithElectrum(
+        invalidHex
+      )
+
+      assert.instanceOf(result, Error)
+      assert.include(result.message, 'TX decode failed')
+    })
+
+    it('should return txid for valid transaction', async function () {
+      // We cannot send an actual broadcast transaction to mainnet
+      if (process.env.TEST !== 'unit') return this.skip()
+
+      const validHex = mockData.txDetails.hex
+
+      stubMethodForUnitTests(
+        electrumxRoute.electrumx,
+        'request',
+        mockData.txDetails.hash
+      )
+
+      const result = await electrumxRoute._broadcastTransactionWithElectrum(
+        validHex
+      )
+
+      assert.typeOf(result, 'string')
+      assert.equal(result, mockData.txDetails.hash)
+    })
+  })
+
+  describe('#broadcastTransaction', () => {
+    it('should throw an error for a non-string', async () => {
+      req.body = 456
+
+      stubMethodForUnitTests(
+        electrumxRoute,
+        '_broadcastTransactionWithElectrum',
+        new Error('request body must be a string.')
+      )
+
+      const result = await electrumxRoute.broadcastTransaction(req, res)
+
+      expectRouteError(res, result, 'request body must be a string.')
+    })
+
+    it('should throw an error object for invalid formatted transaction', async () => {
+      req.body.txHex = mockData.txDetails.hex.substring(10)
+
+      stubMethodForUnitTests(
+        electrumxRoute,
+        '_broadcastTransactionWithElectrum',
+        new Error(
+          'Error: the transaction was rejected by network rules.\n\nTX decode failed\n'
+        )
+      )
+
+      const result = await electrumxRoute.broadcastTransaction(req, res)
+
+      expectRouteError(res, result, 'TX decode failed')
+    })
+
+    it('should return txid for valid transaction', async function () {
+      // We cannot send an actual broadcast transaction to mainnet
+      if (process.env.TEST !== 'unit') return this.skip()
+
+      req.body.txHex = mockData.txDetails.hex
+
+      stubMethodForUnitTests(
+        electrumxRoute,
+        '_broadcastTransactionWithElectrum',
+        mockData.txDetails.hash
+      )
+
+      const result = await electrumxRoute.broadcastTransaction(req, res)
+
+      assert.property(result, 'success')
+      assert.equal(result.success, true)
+
+      assert.property(result, 'txid')
+      assert.equal(result.txid, mockData.txDetails.hash)
+    })
+  })
+
+  describe('#_blockHeadersFromElectrum', () => {
+    it('should return error object for invalid block height', async () => {
+      const height = -10
+
+      stubMethodForUnitTests(
+        electrumxRoute.electrumx,
+        'request',
+        new Error('Invalid height')
+      )
+
+      const result = await electrumxRoute._blockHeadersFromElectrum(height, 2)
+
+      assert.instanceOf(result, Error)
+      assert.include(result.message, 'Invalid height')
+    })
+
+    it('should return error object for invalid count', async () => {
+      const height = 42
+
+      stubMethodForUnitTests(
+        electrumxRoute.electrumx,
+        'request',
+        new Error('Invalid count')
+      )
+
+      const result = await electrumxRoute._blockHeadersFromElectrum(height, -1)
+
+      assert.instanceOf(result, Error)
+      assert.include(result.message, 'Invalid count')
+    })
+
+    it('should get block header for a single block height', async () => {
+      const height = 42
+
+      const mockedResponse = {
+        count: 2,
+        hex: mockData.blockHeaders.join(''),
+        max: 2016
+      }
+
+      stubMethodForUnitTests(
+        electrumxRoute.electrumx,
+        'request',
+        mockedResponse
+      )
+
+      const result = await electrumxRoute._blockHeadersFromElectrum(height, 2)
+
+      assert.isArray(result)
+      assert.deepEqual(result, mockData.blockHeaders)
+    })
+  })
+
   // describe('#getBlockheaders', () => {
   //   it('should throw 400 if height is not a number', async () => {
   //     req.params.height = 'Hello'
@@ -903,100 +997,7 @@ describe('#Electrumx', () => {
   //   })
   // })
   //
-  // describe('#_broadcastTransactionWithElectrum', () => {
-  //   it('should return error object for invalid formatted transaction', async () => {
-  //     const invalidHex = mockData.txDetails.hex.substring(10)
-  //
-  //     stubMethodForUnitTests(
-  //       electrumxRoute.electrumx,
-  //       'request',
-  //       new Error(
-  //         'Error: the transaction was rejected by network rules.\n\nTX decode failed\n'
-  //       )
-  //     )
-  //
-  //     const result = await electrumxRoute._broadcastTransactionWithElectrum(
-  //       invalidHex
-  //     )
-  //
-  //     assert.instanceOf(result, Error)
-  //     assert.include(result.message, 'TX decode failed')
-  //   })
-  //
-  //   it('should return txid for valid transaction', async function () {
-  //     // We cannot send an actual broadcast transaction to mainnet
-  //     if (process.env.TEST !== 'unit') return this.skip()
-  //
-  //     const validHex = mockData.txDetails.hex
-  //
-  //     stubMethodForUnitTests(
-  //       electrumxRoute.electrumx,
-  //       'request',
-  //       mockData.txDetails.hash
-  //     )
-  //
-  //     const result = await electrumxRoute._broadcastTransactionWithElectrum(
-  //       validHex
-  //     )
-  //
-  //     assert.typeOf(result, 'string')
-  //     assert.equal(result, mockData.txDetails.hash)
-  //   })
-  // })
-  //
-  // describe('#broadcastTransaction', () => {
-  //   it('should throw an error for a non-string', async () => {
-  //     req.body = 456
-  //
-  //     stubMethodForUnitTests(
-  //       electrumxRoute,
-  //       '_broadcastTransactionWithElectrum',
-  //       new Error('request body must be a string.')
-  //     )
-  //
-  //     const result = await electrumxRoute.broadcastTransaction(req, res)
-  //
-  //     expectRouteError(res, result, 'request body must be a string.')
-  //   })
-  //
-  //   it('should throw an error object for invalid formatted transaction', async () => {
-  //     req.body.txHex = mockData.txDetails.hex.substring(10)
-  //
-  //     stubMethodForUnitTests(
-  //       electrumxRoute,
-  //       '_broadcastTransactionWithElectrum',
-  //       new Error(
-  //         'Error: the transaction was rejected by network rules.\n\nTX decode failed\n'
-  //       )
-  //     )
-  //
-  //     const result = await electrumxRoute.broadcastTransaction(req, res)
-  //
-  //     expectRouteError(res, result, 'TX decode failed')
-  //   })
-  //
-  //   it('should return txid for valid transaction', async function () {
-  //     // We cannot send an actual broadcast transaction to mainnet
-  //     if (process.env.TEST !== 'unit') return this.skip()
-  //
-  //     req.body.txHex = mockData.txDetails.hex
-  //
-  //     stubMethodForUnitTests(
-  //       electrumxRoute,
-  //       '_broadcastTransactionWithElectrum',
-  //       mockData.txDetails.hash
-  //     )
-  //
-  //     const result = await electrumxRoute.broadcastTransaction(req, res)
-  //
-  //     assert.property(result, 'success')
-  //     assert.equal(result.success, true)
-  //
-  //     assert.property(result, 'txid')
-  //     assert.equal(result.txid, mockData.txDetails.hash)
-  //   })
-  // })
-  //
+
   // describe('#_balanceFromElectrumx', () => {
   //   it('should throw error for invalid address', async () => {
   //     try {
