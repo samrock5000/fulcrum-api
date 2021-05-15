@@ -5,7 +5,8 @@
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
-    "test": "echo no tests yet"
+    "test": "npm run test-v1",
+    "test-v1": "export NETWORK=mainnet && nyc --reporter=text mocha --exit --timeout 60000 test/v1/"
   },
   "repository": {
     "type": "git",
@@ -40,7 +41,9 @@
     "eslint-plugin-standard": "^5.0.0",
     "husky": "^6.0.0",
     "mocha": "^8.4.0",
+    "nyc": "^15.1.0",
     "semantic-release": "^17.4.3",
+    "sinon": "^10.0.0",
     "standard": "^16.0.3"
   },
   "release": {

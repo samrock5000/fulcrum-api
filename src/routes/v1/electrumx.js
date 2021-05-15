@@ -106,28 +106,28 @@ class Electrum {
   }
 
   // Disconnect from the ElectrumX server.
-  // async disconnect () {
-  //   try {
-  //     // Return immediately if the isReady flag is false.
-  //     if (!_this.isReady) return true
-  //
-  //     // Disable the reconnect timer.
-  //     clearInterval(_this.reconnectIntervalHandle)
-  //
-  //     // Disconnect from the server.
-  //     await _this.electrumx.disconnect()
-  //
-  //     // Clear the isReady flag.
-  //     _this.isReady = false
-  //
-  //     // Return true to signal that the disconnection happened successfully.
-  //     return true
-  //   } catch (err) {
-  //     // console.log(`err: `, err)
-  //     wlogger.error('Error in electrumx.js/disconnect()')
-  //     throw err
-  //   }
-  // }
+  async disconnect () {
+    try {
+      // Return immediately if the isReady flag is false.
+      if (!_this.isReady) return true
+
+      // Disable the reconnect timer.
+      clearInterval(_this.reconnectIntervalHandle)
+
+      // Disconnect from the server.
+      await _this.electrumx.disconnect()
+
+      // Clear the isReady flag.
+      _this.isReady = false
+
+      // Return true to signal that the disconnection happened successfully.
+      return true
+    } catch (err) {
+      // console.log(`err: `, err)
+      wlogger.error('Error in electrumx.js/disconnect()')
+      throw err
+    }
+  }
 
   // DRY error handler.
   errorHandler (err, res) {

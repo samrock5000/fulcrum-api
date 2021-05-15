@@ -2,5 +2,6 @@ node_modules/
 logs/
 apidocs/
 shell-scripts/
+.nyc_output/
 
 
