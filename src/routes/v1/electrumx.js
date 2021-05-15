@@ -9,6 +9,7 @@ const router = express.Router()
 const axios = require('axios')
 const util = require('util')
 const bitcore = require('bitcore-lib-cash')
+const BCHJS = require('@psf/bch-js')
 
 const ElectrumCash = require('electrum-cash').ElectrumClient
 // const ElectrumCash = require('/home/trout/work/personal/electrum-cash/electrum.js').Client // eslint-disable-line
@@ -17,10 +18,6 @@ const wlogger = require('../../util/winston-logging')
 // const config = require('../../../config')
 
 const RouteUtils = require('../route-utils')
-// const routeUtils = new RouteUtils()
-
-// const BCHJS = require('@psf/bch-js')
-// const bchjs = new BCHJS()
 
 let _this
 
@@ -31,7 +28,7 @@ class Electrum {
     // _this.config = config
     _this.axios = axios
     _this.routeUtils = new RouteUtils()
-    // _this.bchjs = bchjs
+    _this.bchjs = new BCHJS()
     _this.bitcore = bitcore
 
     _this.electrumx = new ElectrumCash(
@@ -48,7 +45,7 @@ class Electrum {
 
     _this.router = router
     _this.router.get('/', _this.root)
-    // _this.router.get('/utxos/:address', _this.getUtxos)
+    _this.router.get('/utxos/:address', _this.getUtxos)
     // _this.router.post('/utxos', _this.utxosBulk)
     // _this.router.get('/tx/data/:txid', _this.getTransactionDetails)
     // _this.router.post('/tx/data', _this.transactionDetailsBulk)
@@ -157,35 +154,35 @@ class Electrum {
   // Returns a promise that resolves to UTXO data for an address. Expects input
   // to be a cash address, and input validation to have already been done by
   // parent, calling function.
-  // async _utxosFromElectrumx (address) {
-  //   try {
-  //     // Convert the address to a scripthash.
-  //     const scripthash = _this.addressToScripthash(address)
-  //
-  //     if (!_this.isReady) {
-  //       throw new Error(
-  //         'ElectrumX server connection is not ready. Call await connectToServer() first.'
-  //       )
-  //     }
-  //
-  //     // Query the utxos from the ElectrumX server.
-  //     const electrumResponse = await _this.electrumx.request(
-  //       'blockchain.scripthash.listunspent',
-  //       scripthash
-  //     )
-  //     // console.log(
-  //     //   `electrumResponse: ${JSON.stringify(electrumResponse, null, 2)}`
-  //     // )
-  //
-  //     return electrumResponse
-  //   } catch (err) {
-  //     // console.log('err: ', err)
-  //
-  //     // Write out error to error log.
-  //     wlogger.error('Error in elecrumx.js/_utxosFromElectrumx(): ', err)
-  //     throw err
-  //   }
-  // }
+  async _utxosFromElectrumx (address) {
+    try {
+      // Convert the address to a scripthash.
+      const scripthash = _this.addressToScripthash(address)
+
+      if (!_this.isReady) {
+        throw new Error(
+          'ElectrumX server connection is not ready. Call await connectToServer() first.'
+        )
+      }
+
+      // Query the utxos from the ElectrumX server.
+      const electrumResponse = await _this.electrumx.request(
+        'blockchain.scripthash.listunspent',
+        scripthash
+      )
+      // console.log(
+      //   `electrumResponse: ${JSON.stringify(electrumResponse, null, 2)}`
+      // )
+
+      return electrumResponse
+    } catch (err) {
+      // console.log('err: ', err)
+
+      // Write out error to error log.
+      wlogger.error('Error in elecrumx.js/_utxosFromElectrumx(): ', err)
+      throw err
+    }
+  }
 
   /**
    * @api {get} /electrumx/utxos/{addr} Get utxos for a single address.
@@ -199,62 +196,63 @@ class Electrum {
    *
    */
   // GET handler for single balance
-  // async getUtxos (req, res, next) {
-  //   try {
-  //     const address = req.params.address
-  //
-  //     // Reject if address is an array.
-  //     if (Array.isArray(address)) {
-  //       res.status(400)
-  //       return res.json({
-  //         success: false,
-  //         error: 'address can not be an array. Use POST for bulk upload.'
-  //       })
-  //     }
-  //
-  //     const cashAddr = _this.bchjs.Address.toCashAddress(address)
-  //
-  //     // Prevent a common user error. Ensure they are using the correct network address.
-  //     const networkIsValid = _this.routeUtils.validateNetwork(cashAddr)
-  //     if (!networkIsValid) {
-  //       res.status(400)
-  //       return res.json({
-  //         success: false,
-  //         error:
-  //           'Invalid network. Trying to use a testnet address on mainnet, or vice versa.'
-  //       })
-  //     }
-  //
-  //     wlogger.debug(
-  //       'Executing electrumx/getUtxos with this address: ',
-  //       cashAddr
-  //     )
-  //
-  //     // Get data from ElectrumX server.
-  //     const electrumResponse = await _this._utxosFromElectrumx(cashAddr)
-  //     // console.log(`_utxosFromElectrumx(): ${JSON.stringify(electrumResponse, null, 2)}`)
-  //
-  //     // Pass the error message if ElectrumX reports an error.
-  //     if (Object.prototype.hasOwnProperty.call(electrumResponse, 'code')) {
-  //       res.status(400)
-  //       return res.json({
-  //         success: false,
-  //         message: electrumResponse.message
-  //       })
-  //     }
-  //
-  //     res.status(200)
-  //     return res.json({
-  //       success: true,
-  //       utxos: electrumResponse
-  //     })
-  //   } catch (err) {
-  //     // Write out error to error log.
-  //     wlogger.error('Error in elecrumx.js/getUtxos().', err)
-  //
-  //     return _this.errorHandler(err, res)
-  //   }
-  // }
+  async getUtxos (req, res, next) {
+    try {
+      const address = req.params.address
+
+      // Reject if address is an array.
+      if (Array.isArray(address)) {
+        res.status(400)
+        return res.json({
+          success: false,
+          error: 'address can not be an array. Use POST for bulk upload.'
+        })
+      }
+
+      const cashAddr = _this.bchjs.Address.toCashAddress(address)
+
+      // Prevent a common user error. Ensure they are using the correct network address.
+      const networkIsValid = _this.routeUtils.validateNetwork(cashAddr)
+
+      if (!networkIsValid) {
+        res.status(400)
+        return res.json({
+          success: false,
+          error:
+            'Invalid network. Trying to use a testnet address on mainnet, or vice versa.'
+        })
+      }
+
+      wlogger.debug(
+        'Executing electrumx/getUtxos with this address: ',
+        cashAddr
+      )
+
+      // Get data from ElectrumX server.
+      const electrumResponse = await _this._utxosFromElectrumx(cashAddr)
+      // console.log(`_utxosFromElectrumx(): ${JSON.stringify(electrumResponse, null, 2)}`)
+
+      // Pass the error message if ElectrumX reports an error.
+      if (Object.prototype.hasOwnProperty.call(electrumResponse, 'code')) {
+        res.status(400)
+        return res.json({
+          success: false,
+          message: electrumResponse.message
+        })
+      }
+
+      res.status(200)
+      return res.json({
+        success: true,
+        utxos: electrumResponse
+      })
+    } catch (err) {
+      // Write out error to error log.
+      wlogger.error('Error in elecrumx.js/getUtxos().', err)
+
+      return _this.errorHandler(err, res)
+    }
+  }
 
   /**
    * @api {post} /electrumx/utxo Get utxos for an array of addresses.

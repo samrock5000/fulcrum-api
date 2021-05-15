@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Permissionless-Software-Foundation/fulcrum-api#readme",
   "dependencies": {
+    "@psf/bch-js": "^4.18.1",
     "axios": "^0.21.1",
     "bitcore-lib-cash": "^8.25.10",
     "body-parser": "^1.19.0",

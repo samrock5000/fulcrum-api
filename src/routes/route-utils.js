@@ -2,7 +2,18 @@
   Utility functions for Express routes.
 */
 
+const BCHJS = require('@psf/bch-js')
+
+const wlogger = require('../util/winston-logging')
+
 class RouteUtils {
+  constructor () {
+    // _this = this
+
+    this.bchjs = new BCHJS()
+    // this.axios = axios
+  }
+
   // Error messages returned by a full node can be burried pretty deep inside the
   // error object returned by Axios. This function attempts to extract and interpret
   // error messages.
@@ -111,6 +122,7 @@ class RouteUtils {
   validateNetwork (addr) {
     try {
       const network = process.env.NETWORK
+      // console.log(`network: ${network}`)
 
       // Return false if NETWORK is not defined.
       if (!network || network === '') {
