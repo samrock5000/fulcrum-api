@@ -20,101 +20,116 @@ const wlogger = require('./util/winston-logging')
 const ElectrumxV1 = require('./routes/v1/electrumx')
 const electrumxv1 = new ElectrumxV1()
 
-// Connect to the Fulcrum server.
-electrumxv1.connect()
+let server
 
-const app = express()
+async function startApp () {
+  try {
+    console.log('Starting Fulcrum REST API...')
 
-app.locals.env = process.env
+    // Wait 5 seconds to connect to Fulcrum if this is not a test.
+    // The gives the Docker container time to start.
+    await sleep(5000)
 
-app.use(helmet())
+    // Connect to the Fulcrum server.
+    await electrumxv1.connect()
 
-app.use(cors())
-app.enable('trust proxy')
+    const app = express()
 
-// view engine setup
-// app.set("views", path.join(__dirname, "views"));
-// app.set("view engine", "jade");
+    app.locals.env = process.env
 
-// Mount the docs
-// app.use("/docs", express.static(`${__dirname}/../docs`));
+    app.use(helmet())
 
-// Log each request to the console with IP addresses.
-// app.use(logger("dev"))
-const morganFormat =
-  ':remote-addr :remote-user :method :url :status :response-time ms - :res[content-length] :user-agent'
-app.use(logger(morganFormat))
+    app.use(cors())
+    app.enable('trust proxy')
 
-// Log the same data to the winston logs.
-const logStream = {
-  write: function (message, encoding) {
-    wlogger.info(`request: ${message}`)
+    // view engine setup
+    // app.set("views", path.join(__dirname, "views"));
+    // app.set("view engine", "jade");
+
+    // Mount the docs
+    // app.use("/docs", express.static(`${__dirname}/../docs`));
+
+    // Log each request to the console with IP addresses.
+    // app.use(logger("dev"))
+    const morganFormat =
+      ':remote-addr :remote-user :method :url :status :response-time ms - :res[content-length] :user-agent'
+    app.use(logger(morganFormat))
+
+    // Log the same data to the winston logs.
+    const logStream = {
+      write: function (message, encoding) {
+        wlogger.info(`request: ${message}`)
+      }
+    }
+    app.use(logger(morganFormat, { stream: logStream }))
+
+    app.use(bodyParser.json())
+    app.use(bodyParser.urlencoded({ extended: false }))
+    app.use(cookieParser())
+    app.use(express.static(path.join(__dirname, 'public')))
+
+    // Log requests for later analysis.
+    // app.use("/", logReqInfo);
+
+    const v4prefix = 'v4'
+
+    // catch 404 and forward to error handler
+    app.use((req, res, next) => {
+      const err = {
+        message: 'Not Found',
+        status: 404
+      }
+
+      next(err)
+    })
+
+    // error handler
+    app.use((err, req, res, next) => {
+      const status = err.status || 500
+
+      // set locals, only providing error in development
+      res.locals.message = err.message
+      res.locals.error = req.app.get('env') === 'development' ? err : {}
+
+      // render the error page
+      res.status(status)
+      res.json({
+        status: status,
+        message: err.message
+      })
+    })
+
+    /**
+     * Get port from environment and store in Express.
+     */
+    const port = normalizePort(process.env.PORT || '3000')
+    app.set('port', port)
+    wlogger.info(`fulcrum-api started on port ${port}`)
+
+    /**
+     * Create HTTP server.
+     */
+    server = http.createServer(app)
+
+    /**
+     * Listen on provided port, on all network interfaces.
+     */
+
+    server.listen(port)
+    server.on('error', onError)
+    server.on('listening', onListening)
+
+    // Set the time before a timeout error is generated.
+    // If this server does not return before this time, the connection will be severed.
+    // 10 seconds is way too agressive. 30 Seconds was used for a while, but with
+    // being able to set a timeout between UTXOs for tokenUtxoDetails, the timeout
+    // needed to be extended.
+    server.setTimeout(1000 * 60 * 5) // 5 minutes
+  } catch (err) {
+    console.error('Unhandled exception in startApp(): ', err)
   }
 }
-app.use(logger(morganFormat, { stream: logStream }))
-
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(cookieParser())
-app.use(express.static(path.join(__dirname, 'public')))
-
-// Log requests for later analysis.
-// app.use("/", logReqInfo);
-
-const v4prefix = 'v4'
-
-// catch 404 and forward to error handler
-app.use((req, res, next) => {
-  const err = {
-    message: 'Not Found',
-    status: 404
-  }
-
-  next(err)
-})
-
-// error handler
-app.use((err, req, res, next) => {
-  const status = err.status || 500
-
-  // set locals, only providing error in development
-  res.locals.message = err.message
-  res.locals.error = req.app.get('env') === 'development' ? err : {}
-
-  // render the error page
-  res.status(status)
-  res.json({
-    status: status,
-    message: err.message
-  })
-})
-
-/**
- * Get port from environment and store in Express.
- */
-const port = normalizePort(process.env.PORT || '3000')
-app.set('port', port)
-wlogger.info(`fulcrum-api started on port ${port}`)
-
-/**
- * Create HTTP server.
- */
-const server = http.createServer(app)
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-
-server.listen(port)
-server.on('error', onError)
-server.on('listening', onListening)
-
-// Set the time before a timeout error is generated.
-// If this server does not return before this time, the connection will be severed.
-// 10 seconds is way too agressive. 30 Seconds was used for a while, but with
-// being able to set a timeout between UTXOs for tokenUtxoDetails, the timeout
-// needed to be extended.
-server.setTimeout(1000 * 60 * 5) // 5 minutes
+startApp()
 
 /**
  * Normalize a port into a number, string, or false.
@@ -167,4 +182,9 @@ function onListening () {
   const addr = server.address()
   const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`
   console.log(`Listening on ${bind}`)
+}
+
+// Promise based sleep function:
+function sleep (ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
