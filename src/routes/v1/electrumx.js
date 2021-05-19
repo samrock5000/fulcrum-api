@@ -98,7 +98,7 @@ class Electrum {
     } catch (err) {
       console.log('err: ', err)
       wlogger.error('Error in electrumx.js/connect(): ', err)
-      // throw err
+      throw err
     }
   }
 
