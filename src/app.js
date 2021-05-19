@@ -26,9 +26,9 @@ async function startApp () {
   try {
     console.log('Starting Fulcrum REST API...')
 
-    // Wait 5 seconds to connect to Fulcrum if this is not a test.
+    // Wait 10 seconds to connect to Fulcrum if this is not a test.
     // The gives the Docker container time to start.
-    await sleep(5000)
+    await sleep(10000)
 
     // Connect to the Fulcrum server.
     await electrumxv1.connect()
@@ -127,6 +127,7 @@ async function startApp () {
     server.setTimeout(1000 * 60 * 5) // 5 minutes
   } catch (err) {
     console.error('Unhandled exception in startApp(): ', err)
+    process.exit(1)
   }
 }
 startApp()
