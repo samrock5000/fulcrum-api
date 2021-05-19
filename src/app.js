@@ -71,7 +71,9 @@ async function startApp () {
     // Log requests for later analysis.
     // app.use("/", logReqInfo);
 
-    const v4prefix = 'v4'
+    const v1prefix = 'v1'
+
+    app.use(`/${v1prefix}/` + 'electrumx', electrumxv1.router)
 
     // catch 404 and forward to error handler
     app.use((req, res, next) => {
