@@ -3,5 +3,5 @@ logs/
 apidocs/
 shell-scripts/
 .nyc_output/
-
+docs/
 

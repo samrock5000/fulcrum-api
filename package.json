@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/app.js",
     "test": "npm run test-v1",
-    "test-v1": "export NETWORK=mainnet && nyc --reporter=text mocha --exit --timeout 60000 test/v1/"
+    "test-v1": "export NETWORK=mainnet && nyc --reporter=text mocha --exit --timeout 60000 test/v1/",
+    "docs": "./node_modules/.bin/apidoc -i src/routes/v1 -o docs"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,7 @@
   "homepage": "https://github.com/Permissionless-Software-Foundation/fulcrum-api#readme",
   "dependencies": {
     "@psf/bch-js": "^4.18.1",
+    "apidoc": "^0.28.0",
     "axios": "^0.21.1",
     "bitcore-lib-cash": "^8.25.10",
     "body-parser": "^1.19.0",
@@ -54,5 +56,9 @@
         "npmPublish": false
       }
     ]
+  },
+  "apidoc": {
+    "title": "fulcrum-api",
+    "url": "https://fulcrum-api.fullstackbch.nl/v1"
   }
 }
