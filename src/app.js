@@ -42,13 +42,6 @@ async function startApp () {
     app.use(cors())
     app.enable('trust proxy')
 
-    // view engine setup
-    // app.set("views", path.join(__dirname, "views"));
-    // app.set("view engine", "jade");
-
-    // Mount the docs
-    app.use('/docs', express.static(`${__dirname.toString()}/../docs`))
-
     // Log each request to the console with IP addresses.
     // app.use(logger("dev"))
     const morganFormat =
@@ -66,7 +59,11 @@ async function startApp () {
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({ extended: false }))
     app.use(cookieParser())
-    app.use(express.static(path.join(__dirname, 'public')))
+    // app.use(express.static(path.join(__dirname, 'public')))
+    app.use(express.static(`${__dirname.toString()}/../public`))
+
+    // Mount the docs
+    app.use('/docs', express.static(`${__dirname.toString()}/../docs`))
 
     // Log requests for later analysis.
     // app.use("/", logReqInfo);

@@ -187,7 +187,7 @@ class Electrum {
   /**
    * @api {get} /electrumx/utxos/{addr} Get utxos for a single address.
    * @apiName UTXOs for a single address
-   * @apiGroup ElectrumX / Fulcrum
+   * @apiGroup Fulcrum
    * @apiDescription Returns an object with UTXOs associated with an address.
    *
    *
@@ -257,7 +257,7 @@ class Electrum {
   /**
    * @api {post} /electrumx/utxo Get utxos for an array of addresses.
    * @apiName  UTXOs for an array of addresses
-   * @apiGroup ElectrumX / Fulcrum
+   * @apiGroup Fulcrum
    * @apiDescription Returns an array of objects with UTXOs associated with an address.
    * Limited to 20 items per request.
    *
@@ -382,7 +382,7 @@ class Electrum {
   /**
    * @api {get} /electrumx/tx/data/{txid} Get transaction details for a TXID
    * @apiName transaction details for a TXID
-   * @apiGroup ElectrumX / Fulcrum
+   * @apiGroup Fulcrum
    * @apiDescription Returns an object with transaction details of the TXID
    *
    *
@@ -442,7 +442,7 @@ class Electrum {
   /**
    * @api {post} /electrumx/tx/data Get transaction details for an array of TXIDs
    * @apiName  Transaction details for an array of TXIDs
-   * @apiGroup ElectrumX / Fulcrum
+   * @apiGroup Fulcrum
    * @apiDescription Returns an array of objects with transaction details of an array of TXIDs.
    * Limited to 20 items per request.
    *
@@ -544,7 +544,7 @@ class Electrum {
   /**
    * @api {post} /electrumx/tx/broadcast Broadcast a raw transaction
    * @apiName Broadcast a raw transaction
-   * @apiGroup ElectrumX / Fulcrum
+   * @apiGroup Fulcrum
    * @apiDescription Broadcast a raw transaction and return the transaction ID on success or error on failure.
    *
    * @apiExample Example usage:
@@ -639,7 +639,7 @@ class Electrum {
   /**
    * @api {get} /electrumx/block/headers/{height} Get `count` block headers starting at a height
    * @apiName Block header data for a `count` blocks starting at a block height
-   * @apiGroup ElectrumX / Fulcrum
+   * @apiGroup Fulcrum
    * @apiDescription Returns an array with block headers starting at the block height
    *
    *
@@ -708,7 +708,7 @@ class Electrum {
   /**
    * @api {post} /electrumx/block/headers Get block headers for an array of height + count pairs
    * @apiName  Block headers for an array of height + count pairs
-   * @apiGroup ElectrumX / Fulcrum
+   * @apiGroup Fulcrum
    * @apiDescription Returns an array of objects with blockheaders of an array of TXIDs.
    * Limited to 20 items per request.
    *
@@ -807,7 +807,7 @@ class Electrum {
   /**
    * @api {get} /electrumx/balance/{addr} Get balance for a single address.
    * @apiName Balance for a single address
-   * @apiGroup ElectrumX / Fulcrum
+   * @apiGroup Fulcrum
    * @apiDescription Returns an object with confirmed and unconfirmed balance associated with an address.
    *
    *
@@ -877,7 +877,7 @@ class Electrum {
   /**
    * @api {post} /electrumx/balance Get balances for an array of addresses.
    * @apiName  Balances for an array of addresses
-   * @apiGroup ElectrumX / Fulcrum
+   * @apiGroup Fulcrum
    * @apiDescription Returns an array of balanes associated with an array of address.
    * Limited to 20 items per request.
    *
@@ -1000,7 +1000,7 @@ class Electrum {
   /**
    * @api {get} /electrumx/transactions/{addr} Get transaction history for a single address.
    * @apiName Transaction history for a single address
-   * @apiGroup ElectrumX / Fulcrum
+   * @apiGroup Fulcrum
    * @apiDescription Returns an array of historical transactions associated with an address.
    *
    *
@@ -1070,7 +1070,7 @@ class Electrum {
   /**
    * @api {post} /electrumx/transactions Get the transaction history for an array of addresses.
    * @apiName  Transactions for an array of addresses
-   * @apiGroup ElectrumX / Fulcrum
+   * @apiGroup Fulcrum
    * @apiDescription Returns an array of transactions associated with an array of address.
    * Limited to 20 items per request.
    *
@@ -1193,7 +1193,7 @@ class Electrum {
   /**
    * @api {get} /electrumx/unconfirmed/{addr} Get unconfirmed utxos for a single address.
    * @apiName Unconfirmed UTXOs for a single address
-   * @apiGroup ElectrumX / Fulcrum
+   * @apiGroup Fulcrum
    * @apiDescription Returns an object with unconfirmed UTXOs associated with an address.
    *
    *
@@ -1263,7 +1263,7 @@ class Electrum {
   /**
    * @api {post} /electrumx/unconfirmed Get unconfirmed utxos for an array of addresses.
    * @apiName  Unconfirmed UTXOs for an array of addresses
-   * @apiGroup ElectrumX / Fulcrum
+   * @apiGroup Fulcrum
    * @apiDescription Returns an array of objects with unconfirmed UTXOs associated with an address.
    * Limited to 20 items per request.
    *

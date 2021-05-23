@@ -21,7 +21,7 @@
   "homepage": "https://github.com/Permissionless-Software-Foundation/fulcrum-api#readme",
   "dependencies": {
     "@psf/bch-js": "^4.18.1",
-    "apidoc": "^0.28.0",
+    "apidoc": "^0.26.0",
     "axios": "^0.21.1",
     "bitcore-lib-cash": "^8.25.10",
     "body-parser": "^1.19.0",
@@ -29,7 +29,8 @@
     "cors": "^2.8.5",
     "electrum-cash": "^2.0.7",
     "express": "^4.17.1",
-    "helmet": "^4.6.0",
+    "handlebars": "^4.7.7",
+    "helmet": "^3.21.2",
     "morgan": "^1.10.0",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.5"
