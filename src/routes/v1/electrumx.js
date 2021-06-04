@@ -644,7 +644,7 @@ class Electrum {
    *
    *
    * @apiExample Example usage:
-   * curl -X GET "https://fulcrum-api.fullstackbch.nl/v1/electrumx/block/header/42?count=2" -H "accept: application/json"
+   * curl -X GET "https://fulcrum-api.fullstackbch.nl/v1/electrumx/block/headers/42?count=2" -H "accept: application/json"
    *
    */
   // GET handler for single block headers
@@ -713,7 +713,7 @@ class Electrum {
    * Limited to 20 items per request.
    *
    * @apiExample Example usage:
-   * curl -X POST "https://fulcrum-api.fullstackbch.nl/v1/electrumx/block/headers" -H "accept: application/json" -H "Content-Type: application/json" -d '{"heights":[{ "height": 42, count: 2 }, { "height": 100, count: 5 }]}'
+   * curl -X POST "https://fulcrum-api.fullstackbch.nl/v1/electrumx/block/headers" -H "accept: application/json" -H "Content-Type: application/json" -d '{"heights":[{ "height": 42, "count": 2 }, { "height": 100, "count": 5 }]}'
    *
    */
   // POST handler for bulk queries on block headers
