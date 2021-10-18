@@ -35,7 +35,8 @@ class Electrum {
       'bch-api',
       '1.4.1',
       process.env.FULCRUM_URL,
-      process.env.FULCRUM_PORT
+      process.env.FULCRUM_PORT,
+      process.env.CERTS
       // '192.168.0.6',
       // '50002'
     )
