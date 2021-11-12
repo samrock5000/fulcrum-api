@@ -209,7 +209,8 @@ class Electrum {
         })
       }
 
-      const cashAddr = _this.bchjs.Address.toCashAddress(address)
+      //const cashAddr = _this.bchjs.Address.toCashAddress(address)
+      const cashAddr = _this.bchjs.Address.toEcashAddress(address)
 
       // Prevent a common user error. Ensure they are using the correct network address.
       const networkIsValid = _this.routeUtils.validateNetwork(cashAddr)
